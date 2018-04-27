@@ -1,2 +1,5 @@
-node fork.js --count=100 --path=./incr.js
-node fork.js --count=102 --path=./decr.js
+node fork.js --count=300 --path=./incr.js
+node fork.js --count=302 --path=./decr.js
+node worker.js &
+node sendMessage.js --message="hi"
+

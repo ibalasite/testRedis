@@ -1,16 +1,19 @@
 var readConfig = require('read-config'),
     config = readConfig('./config.json');
-var RedisSMQ = require("rsmq"); 
 var port=config.Redis.Port;
 var host=config.Redis.Host;
-var qname=config.Redis.Queue.Nmae;
-var retry=config.Redis.Queue.RetryCount;
-var rsmq = new RedisSMQ( {host:host , port: port, ns: "rsmq"} );
+var qname=config.Redis.Queue.Name;
 
-rsmq.sendMessage({qname:qname, message:"Hello World"}, function (err, resp) {
-	if (resp) {
-		console.log("Message sent. ID:", resp);
-	}
-        console.log("wrong");
-});
-
+module.exports = {
+    send : function(msg){
+        var RSMQWorker = require( "rsmq-worker" );
+        var worker = new RSMQWorker( qname, {host:host , port: port, autostart:false});
+	worker.on("ready", function() {
+            console.log("SEND", msg);
+            worker.send(msg,0,function(){
+                console.log( "SENDED" );
+                worker.quit();
+            });
+        });
+    }
+}; 
