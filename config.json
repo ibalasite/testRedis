@@ -1,6 +1,10 @@
 {
  Redis:{
     Host:'172.17.0.4',
-    Port:'6379'
+    Port:'6379',
+    Queue:{
+        Name:'progqueue',
+        RetryCount:10	
+    }
  }
 }
