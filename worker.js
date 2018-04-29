@@ -5,7 +5,7 @@ var port=config.Redis.Port;
 var host=config.Redis.Host;
 var qname=config.Redis.Queue.Name;
 var retry=config.Redis.Queue.RetryCount;
-
+qname="test1";
 console.log(qname);
  var RSMQWorker = require( "rsmq-worker" );
  var worker = new RSMQWorker( qname, {"host":host , "port": port});
