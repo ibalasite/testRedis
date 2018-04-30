@@ -32,8 +32,6 @@ function callBack(queueName,message,func)
   worker.on( "message", function( msg, next, id ){
   	// process your message 
   	console.log("wait");
-        worker.stop();        
-        worker.quit();
         if(msg === "error")
         {
            //agentSend(message,queueName,func);
@@ -42,6 +40,9 @@ function callBack(queueName,message,func)
             func(msg,id);
 
         }        
+        next();
+        worker.stop();        
+        worker.quit();
   });
  
   // optional error listeners 
