@@ -11,6 +11,7 @@ var retry=config.Redis.Queue.RetryCount;
 var client = redis.createClient(port, host);
 const {promisify} = require('util');
 const incrAsync = promisify(client.incr).bind(client);
+const decrAsync = promisify(client.decr).bind(client);
 const sendAsync = promisify(messager.send).bind(messager);
 client.on("error", function(error) {
     console.log(error);
@@ -41,6 +42,16 @@ console.log(qname);
                   returnMessage = "{\"result\":\""+reply+"\"}"; 
                   progress = 1;
                         
+                  console.log("agent incr key progress="+progress+",returnMessage="+returnMessage+",data.id="+data.id);
+            }else if(data.message.cmd === "decr"){
+                  var reply= await decrAsync(data.message.key);
+                  //if (err) throw err;
+                  console.log(reply); // 11
+                  console.log("agent send cmd:"+data.message.cmd+",key:"+data.message.key+",id:"+data.id);
+                  console.log("agent decr key progress="+progress+",returnMessage="+returnMessage+",data.id="+data.id);
+                  returnMessage = "{\"result\":\""+reply+"\"}";
+                  progress = 1;
+
                   console.log("agent incr key progress="+progress+",returnMessage="+returnMessage+",data.id="+data.id);
             }else{
                   returnMessage="cmd:"+data.message.cmd+",key:"+data.message.key+",id:"+data.id;
