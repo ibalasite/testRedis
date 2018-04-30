@@ -8,9 +8,9 @@ module.exports = {
         var RSMQWorker = require( "rsmq-worker" );
         var worker = new RSMQWorker( qname, {host:host , port: port, autostart:false});
 	worker.on("ready", function() {
-                console.log("SEND", msg);
+                //console.log("SEND", msg);
                 worker.send(msg,0,function(){
-                console.log( "SENDED msg:"+msg+",qname:"+qname );
+                //console.log( "SENDED msg:"+msg+",qname:"+qname );
                 worker.quit();
             });
         });

@@ -15,11 +15,11 @@ module.exports = {
 function agentSend(msg,id,func){
     var worker = new RSMQWorker( qname, {host:host , port: port, autostart:false});
     worker.on("ready", function() {
-        console.log(unixTime(new Date())+"async SEND", msg);
+        //console.log(unixTime(new Date())+"async SEND", msg);
         worker.send("{\"message\":"+msg+",\"id\":\""+id+"\"}",0,function(){
-            console.log(unixTime(new Date())+"async callback start");    
+            //console.log(unixTime(new Date())+"async callback start");    
             callBack(id,msg,func);
-            console.log(unixTime(new Date())+"async callback end");    
+            //console.log(unixTime(new Date())+"async callback end");    
             worker.quit();
         });
     });
@@ -31,11 +31,11 @@ function callBack(queueName,message,func)
  
   worker.on( "message", function( msg, next, id ){
   	// process your message 
-  	console.log("wait");
+  	//console.log("wait");
         if(msg === "error")
         {
            //agentSend(message,queueName,func);
-           console.log("error");
+           console.log("msg return error");
         }else{
             func(msg,id);
 

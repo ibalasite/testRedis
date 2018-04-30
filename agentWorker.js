@@ -10,21 +10,22 @@ var retry=config.Redis.Queue.RetryCount;
 
 var client = redis.createClient(port, host);
 const {promisify} = require('util');
+const lib = require("./libDecr.js");
+const libdecrAsync = promisify(lib.decr).bind(lib);
 const incrAsync = promisify(client.incr).bind(client);
 const decrAsync = promisify(client.decr).bind(client);
 const sendAsync = promisify(messager.send).bind(messager);
 client.on("error", function(error) {
     console.log(error);
  });
-
 console.log(qname);
  var RSMQWorker = require( "rsmq-worker" );
  var worker = new RSMQWorker( qname, {"host":host , "port": port});
  
   worker.on( "message", async function( msg, next, id ){
   	// process your message 
-  	console.log("agent:Message id : " + id);
-  	console.log("agent:Message :"+msg);
+  	//console.log("agent:Message id : " + id);
+  	//console.log("agent:Message :"+msg);
        // var data = JSON.parse(msg);
         var data,returnMessage;
         returnMessage="";
@@ -36,32 +37,36 @@ console.log(qname);
             {
                  var reply= await incrAsync(data.message.key);
                   //if (err) throw err;
-                  console.log(reply); // 11
-                  console.log("agent send cmd:"+data.message.cmd+",key:"+data.message.key+",id:"+data.id);
-                  console.log("agent incr key progress="+progress+",returnMessage="+returnMessage+",data.id="+data.id);
+                  //console.log(reply); // 11
+                  //console.log("agent send cmd:"+data.message.cmd+",key:"+data.message.key+",id:"+data.id);
+                  //console.log("agent incr key progress="+progress+",returnMessage="+returnMessage+",data.id="+data.id);
                   returnMessage = "{\"result\":\""+reply+"\"}"; 
                   progress = 1;
                         
                   console.log("agent incr key progress="+progress+",returnMessage="+returnMessage+",data.id="+data.id);
             }else if(data.message.cmd === "decr"){
+                  /*                  
                   var reply= await decrAsync(data.message.key);
                   //if (err) throw err;
-                  console.log(reply); // 11
-                  console.log("agent send cmd:"+data.message.cmd+",key:"+data.message.key+",id:"+data.id);
-                  console.log("agent decr key progress="+progress+",returnMessage="+returnMessage+",data.id="+data.id);
+                  //console.log(reply); // 11
+                  //console.log("agent send cmd:"+data.message.cmd+",key:"+data.message.key+",id:"+data.id);
+                  //console.log("agent decr key progress="+progress+",returnMessage="+returnMessage+",data.id="+data.id);
+                  */
+                  
+                  var reply = await libdecrAsync(data.message.key);
                   returnMessage = "{\"result\":\""+reply+"\"}";
                   progress = 1;
 
-                  console.log("agent incr key progress="+progress+",returnMessage="+returnMessage+",data.id="+data.id);
+                  //console.log("agent incr key progress="+progress+",returnMessage="+returnMessage+",data.id="+data.id);
             }else{
                   returnMessage="cmd:"+data.message.cmd+",key:"+data.message.key+",id:"+data.id;
                   progress = 1;
             }
 
                
-             console.log("send start returnmessage:"+returnMessage+",dataid:"+data.id);
+             //console.log("send start returnmessage:"+returnMessage+",dataid:"+data.id);
              sendAsync(returnMessage,data.id);
-             console.log("send end returnmessage:"+returnMessage+",dataid:"+data.id);
+             //console.log("send end returnmessage:"+returnMessage+",dataid:"+data.id);
 
         } catch (e) {
             returnMessage="error";

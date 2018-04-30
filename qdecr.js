@@ -17,11 +17,12 @@ function multiexec(key,client){
             multi.exec(function(err,replies){
                 multi.discard();
                 if (err){
-                    console.log("exec error:"+err);
+                    //console.log("exec error:"+err);
                     messager.agentSend("{\"cmd\":\"decr\",\"key\":\""+key+"\"}","test"+uniqid(),function(msg,id){
-                           console.log("callback msg:"+msg+",id="+id);
+                           //console.log("callback msg:"+msg+",id="+id);
                            data = JSON.parse(msg)
                            console.log("result:"+data.result);
+                           client.quit();
                            
                      });
                     //multiexec(key,client,--count);
@@ -31,9 +32,10 @@ function multiexec(key,client){
                         client.quit();
                     }else{
                        messager.agentSend("{\"cmd\":\"decr\",\"key\":\""+key+"\"}","test"+uniqid(),function(msg,id){
-                           console.log("callback msg:"+msg+",id="+id);
+                           //console.log("callback msg:"+msg+",id="+id);
                            data = JSON.parse(msg)
                            console.log("result:"+data.result);
+                           client.quit();
                            
                         });
                        
